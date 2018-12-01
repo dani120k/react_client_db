@@ -1,0 +1,9 @@
+.menu{
+    width:250px;
+    height: 100vh;
+    background: #800080;
+    position: fixed;
+    left: -230px;
+    top: 0;
+    transition: all ease 1s;
+}
