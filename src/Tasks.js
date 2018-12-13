@@ -1,7 +1,7 @@
 import './Tasks.css'
 import React, { Component } from 'react';
 
-interface Beer {
+interface Task {
     id: number;
     email: string;
     first_name: string;
@@ -9,22 +9,24 @@ interface Beer {
     org_unit_id: number;
 }
 
-interface BeerListProps {
+interface TaskListProps {
 }
 
-interface BeerListState {
-    beers: Array<Beer>;
+interface TaskListState {
+    count: number;
+    tasks: Array<Task>;
     isLoading: boolean;
 }
 
 
-class Tasks extends React.Component<BeerListProps, BeerListState>{
+class Tasks extends React.Component<TaskListProps, TaskListState>{
 
-    constructor(props: BeerListProps) {
+    constructor(props: TaskListProps) {
         super(props);
 
         this.state = {
-            beers: [],
+            count: 0,
+            tasks: [],
             isLoading: false
         };
     }
@@ -33,16 +35,42 @@ class Tasks extends React.Component<BeerListProps, BeerListState>{
         console.log('event');
     }
 
+
+
     componentDidMount() {
-        console.log('test');
-        fetch('http://localhost:8080/getAllUsers')
+        fetch('http://192.168.1.150:8080/getAllUsers')
             .then(response => response.json())
-            .then(data => {console.log(data); this.setState({beers: data, isLoading: false})});
+            .then(data => { this.setState({count:data.length, tasks: data, isLoading: false})});
+
+        //this.updateAll();
+
+
     }
+
+    updateAll(tasks) {
+        console.log(tasks);
+        var count = tasks.length;
+        console.log(count)
+
+            if (count <= 10){
+                console.log("wtf");
+                var previos = document.createElement('li');
+                previos.className="page-item";
+                previos.innerHTML = "<a href='#' className='page-link' aria-label='Previous'><span aria-hidden='true'><i className='fa fa-fw fa-angle-left'></i></span><span className='sr-only'>Previous</span></a>";
+
+                var divtest = document.createElement('li');
+                divtest.className = "page-item active";
+                divtest.innerHTML = "<a href='#' className='page-link'>1</a>";
+
+                var next = document.getElementById('pages');
+                //next.appendChild(previos);
+                next.appendChild(divtest);
+            }
+        }
 
 
     render(){
-        const {beers, isLoading} = this.state;
+        const {count, tasks, isLoading} = this.state;
 
         if (isLoading) {
             return <p>Loading...</p>;
@@ -157,19 +185,19 @@ class Tasks extends React.Component<BeerListProps, BeerListState>{
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {beers.map((beer: Beer) =>
-                                        <tr key={beer.id}>
+                                    {tasks.map((task: Task) =>
+                                        <tr key={task.id}>
                                             <td className="align-middle">
-                                                <div><a href="/apps/tasks/list">{beer.email}</a></div>
-                                                <span>{beer.first_name}</span></td>
+                                                <div>{task.email}</div>
+                                                <span>{task.first_name}</span></td>
                                             <td className="align-middle"><span
                                                 className="badge badge-success badge-pill">Active</span></td>
                                             <td className="align-middle">
-                                                <div className="mb-2 progress" styles="height: 5px;">
-                                                    <div className="progress-bar" role="progressbar" aria-valuenow="25"
-                                                         aria-valuemin="0" aria-valuemax="100" styles="width: 25%;"></div>
+                                                <div className="progress">
+                                                    <div className="progress-bar" role="progressbar" styles="width: 25%;"
+                                                         aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%
+                                                    </div>
                                                 </div>
-                                                <div>Выделено часов<span className="text-inverse">1/4</span></div>
                                             </td>
                                             <td className="align-middle">
                                                 <div className="avatar-image avatar-image--loaded">
@@ -211,18 +239,10 @@ class Tasks extends React.Component<BeerListProps, BeerListState>{
                             </div>
                             <div className="d-flex justify-content-center pb-0 card-footer">
                                 <nav className="" aria-label="Page navigation example">
-                                    <ul className="pagination">
-                                        <li className="page-item"><a href="#" className="page-link"
-                                                                     aria-label="Previous"><span aria-hidden="true"><i
-                                            className="fa fa-fw fa-angle-left"></i></span><span
-                                            className="sr-only">Previous</span></a></li>
-                                        <li className="page-item active"><a href="#" className="page-link">1</a></li>
-                                        <li className="page-item"><a href="#" className="page-link">2</a></li>
-                                        <li className="page-item"><a href="#" className="page-link">3</a></li>
-                                        <li className="page-item"><a href="#" className="page-link"
-                                                                     aria-label="Next"><span aria-hidden="true"><i
-                                            className="fa fa-fw fa-angle-right"></i></span><span
-                                            className="sr-only">Next</span></a></li>
+                                    <ul className="pagination" id="pages">
+                                        <script>
+                                            document.body.innerHTML = "<h1>Today's date is " + d + "</h1>"
+                                        </script>
                                     </ul>
                                 </nav>
                             </div>

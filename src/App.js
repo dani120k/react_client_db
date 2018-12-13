@@ -19,7 +19,7 @@ class App extends Component {
                     <Route exact path="/kek" component={RegistrationPage}/>
                     <PrivateRoute path="/private" component={Test} />
                     <Route exact path="/group" component={Group}/>
-                    <PrivateRoute exact path="/tasks" component={Tasks}/>
+                    <Route exact path="/tasks" component={Tasks}/>
                 </div>
             </Router>
         );

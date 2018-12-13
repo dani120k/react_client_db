@@ -22,13 +22,6 @@ class LoginBox extends React.Component{
         }
     };
 
-
-    keyPress(event){
-        if (event.key === 'Enter') {
-            this.test();
-        }
-    }
-
   submitLogin(event) {
 
       var username = this.refs.username;
@@ -79,6 +72,7 @@ class LoginBox extends React.Component{
               name="username"
               className="login-input"
               placeholder="Username"
+              onKeyPress={this.submitLogin.bind(this)}
               //onKeyPress={this.keyPress}
             />
           </div>
