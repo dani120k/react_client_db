@@ -1,5 +1,6 @@
 import './Tasks.css'
 import React, { Component } from 'react';
+import axios from 'axios'
 
 interface Task {
     id: number;
@@ -38,13 +39,7 @@ class Tasks extends React.Component<TaskListProps, TaskListState>{
 
 
     componentDidMount() {
-        fetch('http://192.168.1.150:8080/getAllUsers')
-            .then(response => response.json())
-            .then(data => { this.setState({count:data.length, tasks: data, isLoading: false})});
-
-        //this.updateAll();
-
-
+        axios.get('http://localhost:8080/tasks/getAllTask').then(response => { console.log(response); {this.setState({count:response.data.length, tasks:response.data, isLoading:false})} });
     }
 
     updateAll(tasks) {
@@ -52,21 +47,21 @@ class Tasks extends React.Component<TaskListProps, TaskListState>{
         var count = tasks.length;
         console.log(count)
 
-            if (count <= 10){
-                console.log("wtf");
-                var previos = document.createElement('li');
-                previos.className="page-item";
-                previos.innerHTML = "<a href='#' className='page-link' aria-label='Previous'><span aria-hidden='true'><i className='fa fa-fw fa-angle-left'></i></span><span className='sr-only'>Previous</span></a>";
+        if (count <= 10){
+            console.log("wtf");
+            var previos = document.createElement('li');
+            previos.className="page-item";
+            previos.innerHTML = "<a href='#' className='page-link' aria-label='Previous'><span aria-hidden='true'><i className='fa fa-fw fa-angle-left'></i></span><span className='sr-only'>Previous</span></a>";
 
-                var divtest = document.createElement('li');
-                divtest.className = "page-item active";
-                divtest.innerHTML = "<a href='#' className='page-link'>1</a>";
+            var divtest = document.createElement('li');
+            divtest.className = "page-item active";
+            divtest.innerHTML = "<a href='#' className='page-link'>1</a>";
 
-                var next = document.getElementById('pages');
-                //next.appendChild(previos);
-                next.appendChild(divtest);
-            }
+            var next = document.getElementById('pages');
+            //next.appendChild(previos);
+            next.appendChild(divtest);
         }
+    }
 
 
     render(){
@@ -84,9 +79,9 @@ class Tasks extends React.Component<TaskListProps, TaskListState>{
                             <div className="small mb-3">Search</div>
                             <div className="input-group">
                                 <input placeholder="Search for..." type="text" className="form-control"/>
-                                    <div className="input-group-append">
-                                        <button className="btn btn-secondary"><i className="fa fa-search"></i></button>
-                                    </div>
+                                <div className="input-group-append">
+                                    <button className="btn btn-secondary"><i className="fa fa-search"></i></button>
+                                </div>
                             </div>
                         </div>
                         <div className="mb-4">

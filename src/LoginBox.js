@@ -25,34 +25,25 @@ class LoginBox extends React.Component{
   submitLogin(event) {
 
       var username = this.refs.username;
-      var usernameValue = username.value;
-      console.log(usernameValue);
-      if (usernameValue === 'admin') {
-          LoginBox.fakeAuth.authenticate();
-          history.push('/tasks');
-      }
-      else
-          LoginBox.fakeAuth.signout();
-      console.log(LoginBox.fakeAuth.isAuthenticated);
 
-      //window.localStorage.setItem('rr_login', usernameValue);
-      //console.log(window.localStorage.getItem('rr_login'))
-      //LoginBox.OnEnter();
-    /*if (this.refs.username !== null) {
-    	var username = this.refs.username;
-			var usernameValue = username.value;
-    }
-    if (this.refs.password !== null) {
-    	var password = this.refs.password;
-			var passwordValue = password.value;
-    }
-    alert(usernameValue);
-    var user = {
-      id: usernameValue,
-      email: passwordValue
-    }
+      var password = this.refs.password;
 
-    axios.post("http://127.0.0.1:8080/auth", user).then(response => console.log(response));*/
+      var user = new Object();
+      user.login = username.value;
+      user.password = password.value;
+
+      var answer;
+      axios.post("http://127.0.0.1:8080/registration/auth", user).then(response => {
+          console.log(response);
+          if (response.data.errorCode === 0) {
+              LoginBox.fakeAuth.authenticate();
+              history.push('/tasks');
+          } else {
+              console.log(response.status);
+              LoginBox.fakeAuth.signout();
+          }
+      });
+
   }
 
 
