@@ -1,13 +1,24 @@
 import './Tasks.css'
 import React, { Component } from 'react';
-import axios from 'axios'
+import axios from 'axios';
+
+interface User{
+    id: number;
+    login: string;
+    password: string;
+    login_time: string;
+    orgUnitId: number;
+}
 
 interface Task {
     id: number;
-    email: string;
-    first_name: string;
-    second_name: string;
-    org_unit_id: number;
+    creation_time: string;
+    status: number;
+    curr_hours: number;
+    full_hours: number;
+    description: string;
+    creator_user_id: number;
+    executor_user_id: number;
 }
 
 interface TaskListProps {
@@ -39,29 +50,97 @@ class Tasks extends React.Component<TaskListProps, TaskListState>{
 
 
     componentDidMount() {
-        axios.get('http://localhost:8080/tasks/getAllTask').then(response => { console.log(response); {this.setState({count:response.data.length, tasks:response.data, isLoading:false})} });
+        axios.get("http://127.0.0.1:8080/tasks/getAllTask").then(response => {
+
+            var count = response.data.length;
+
+            if (count <= 10){
+                var divtest = document.createElement('li');
+                divtest.className = "page-item active";
+                divtest.innerHTML = "<a href='#' className='page-link'>1</a>";
+
+                var next = document.getElementById('pages');
+                next.appendChild(divtest);
+            } else {
+                var countOf = (count%10==0)? count/10 : count/10+1;
+                var current = document.createElement('li');
+                current.className = "page-item active";
+                current.innerHTML = "<a href='#' className='page-link'>1</a>";
+
+                var next = document.getElementById('pages');
+                next.appendChild(current);
+
+                for(var i = 1; i < countOf; i++)
+                {
+                    var current = document.createElement('li');
+                    current.className = "page-item ";
+                    current.innerHTML = "<a href='#' className='page-link'>" + (i+1) + "</a>";
+                    next.appendChild(current);
+                }
+
+                this.updateTask(response.data);
+            }
+
+            this.setState({count:response.data.length, tasks:response.data, isLoading:false})
+        });
+
+        axios.get("http://127.0.0.1:8080/user/getStatsUser").then(response => {
+            console.log(response);
+        })
     }
 
-    updateAll(tasks) {
-        console.log(tasks);
-        var count = tasks.length;
-        console.log(count)
+    updateTask(array){
+        var next = document.getElementById("bodyForTask");
+        for(var i = 0; i < 10; i++){
+            var current = document.createElement('tr');
+            current.innerHTML = '<td class="align-middle">\n' +
+                '        <div>'+array[i].description + '</div>\n' +
+                '        <span>' + array[i].creation_time + '</span></td>\n' +
+                '    <td class="align-middle"><span\n' +
+                '        class="badge badge-success badge-pill">' + ((array[i].status == 0)? "Active" : ((array[i].status == 1)? "InActive" : ((array[i].status==2)? "Deffered" : "Close"))) + '</span></td>\n' +
+                '    <td class="align-middle">\n' +
+                '        <div class="progress">\n' +
+                '            <div class="progress-bar" role="progressbar" style="width: ' + (array[i].curr_hours/array[i].full_hours)*100 + '%;"\n' +
+                '                 aria-valuenow="' + (array[i].curr_hours/array[i].full_hours)*100 + '" aria-valuemin="0" aria-valuemax="100">' + (array[i].curr_hours/array[i].full_hours)*100 + '%\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '    </td>\n' +
+                '    <td class="align-middle">\n' +
+                '        <div class="avatar-image avatar-image--loaded">\n' +
+                '            <div class="avatar avatar--md avatar-image__image">\n' +
+                '                <div class="avatar__content"><img\n' +
+                '                    src="http://bootdey.com/img/Content/avatar/avatar'+ ((i)%8+1) +'.png"/></div>\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '    </td>\n' +
+                '    <td class="align-middle text-right">\n' +
+                '        <div class="btn-group">\n' +
+                '            <button type="button" aria-haspopup="true" aria-expanded="false"\n' +
+                '                    class="dropdown-toggle btn btn-link"><i\n' +
+                '                class="fa fa-gear"></i></button>\n' +
+                '            <div tabIndex="-1" role="menu" aria-hidden="true"\n' +
+                '                 class="dropdown-menu dropdown-menu-right">\n' +
+                '                <button type="button" tabIndex="0" class="dropdown-item"><i\n' +
+                '                    class="fa fa-fw fa-folder-open mr-2"></i>View\n' +
+                '                </button>\n' +
+                '                <button type="button" tabIndex="0" class="dropdown-item"><i\n' +
+                '                    class="fa fa-fw fa-ticket mr-2"></i>Add Task\n' +
+                '                </button>\n' +
+                '                <button type="button" tabIndex="0" class="dropdown-item"><i\n' +
+                '                    class="fa fa-fw fa-paperclip mr-2"></i>Add Files\n' +
+                '                </button>\n' +
+                '                <div tabIndex="-1" class="dropdown-divider"></div>\n' +
+                '                <button type="button" tabIndex="0" class="dropdown-item"><i\n' +
+                '                    class="fa fa-fw fa-trash mr-2"></i>Delete\n' +
+                '                </button>\n' +
+                '            </div>\n' +
+                '        </div>\n' +
+                '    </td>';
+            next.appendChild(current);
 
-        if (count <= 10){
-            console.log("wtf");
-            var previos = document.createElement('li');
-            previos.className="page-item";
-            previos.innerHTML = "<a href='#' className='page-link' aria-label='Previous'><span aria-hidden='true'><i className='fa fa-fw fa-angle-left'></i></span><span className='sr-only'>Previous</span></a>";
-
-            var divtest = document.createElement('li');
-            divtest.className = "page-item active";
-            divtest.innerHTML = "<a href='#' className='page-link'>1</a>";
-
-            var next = document.getElementById('pages');
-            //next.appendChild(previos);
-            next.appendChild(divtest);
         }
     }
+
 
 
     render(){
@@ -79,9 +158,9 @@ class Tasks extends React.Component<TaskListProps, TaskListState>{
                             <div className="small mb-3">Search</div>
                             <div className="input-group">
                                 <input placeholder="Search for..." type="text" className="form-control"/>
-                                <div className="input-group-append">
-                                    <button className="btn btn-secondary"><i className="fa fa-search"></i></button>
-                                </div>
+                                    <div className="input-group-append">
+                                        <button className="btn btn-secondary"><i className="fa fa-search"></i></button>
+                                    </div>
                             </div>
                         </div>
                         <div className="mb-4">
@@ -179,55 +258,7 @@ class Tasks extends React.Component<TaskListProps, TaskListState>{
                                         <th className="align-middle bt-0 text-right">Actions</th>
                                     </tr>
                                     </thead>
-                                    <tbody>
-                                    {tasks.map((task: Task) =>
-                                        <tr key={task.id}>
-                                            <td className="align-middle">
-                                                <div>{task.email}</div>
-                                                <span>{task.first_name}</span></td>
-                                            <td className="align-middle"><span
-                                                className="badge badge-success badge-pill">Active</span></td>
-                                            <td className="align-middle">
-                                                <div className="progress">
-                                                    <div className="progress-bar" role="progressbar" styles="width: 25%;"
-                                                         aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="align-middle">
-                                                <div className="avatar-image avatar-image--loaded">
-                                                    <div className="avatar avatar--md avatar-image__image">
-                                                        <div className="avatar__content"><img
-                                                            src="http://bootdey.com/img/Content/avatar/avatar1.png"/></div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <td className="align-middle text-right">
-                                                <div className="btn-group">
-                                                    <button type="button" aria-haspopup="true" aria-expanded="false"
-                                                            className="dropdown-toggle btn btn-link"><i
-                                                        className="fa fa-gear"></i></button>
-                                                    <div tabIndex="-1" role="menu" aria-hidden="true"
-                                                         className="dropdown-menu dropdown-menu-right">
-                                                        <button type="button" tabIndex="0" className="dropdown-item"><i
-                                                            className="fa fa-fw fa-folder-open mr-2"></i>View
-                                                        </button>
-                                                        <button type="button" tabIndex="0" className="dropdown-item"><i
-                                                            className="fa fa-fw fa-ticket mr-2"></i>Add Task
-                                                        </button>
-                                                        <button type="button" tabIndex="0" className="dropdown-item"><i
-                                                            className="fa fa-fw fa-paperclip mr-2"></i>Add Files
-                                                        </button>
-                                                        <div tabIndex="-1" className="dropdown-divider"></div>
-                                                        <button type="button" tabIndex="0" className="dropdown-item"><i
-                                                            className="fa fa-fw fa-trash mr-2"></i>Delete
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                        </tr>
-
-                                    )}
+                                    <tbody id="bodyForTask">
 
                                     </tbody>
                                 </table>
