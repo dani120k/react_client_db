@@ -8,6 +8,8 @@ interface User{
     password: string;
     login_time: string;
     orgUnitId: number;
+    count: number;
+    cartoon:number;
 }
 
 interface Task {
@@ -85,7 +87,61 @@ class Tasks extends React.Component<TaskListProps, TaskListState>{
         });
 
         axios.get("http://127.0.0.1:8080/user/getStatsUser").then(response => {
-            console.log(response);
+            var array = response.data;
+            var next = document.getElementById('whoCreateTask');
+            var ct = (array.length>3)? 3: array.length;
+            console.log(ct);
+            for(var i = 0; i < ct; i++)
+            {
+                console.log("wtf");
+                var current = document.createElement('li');
+                current.innerHTML = " <li class=\"nav-item\">\n" +
+                    "                                    <a href=\"#\" class=\"d-flex nav-link\">\n" +
+                    "                                        <div class=\"media\">\n" +
+                    "                                            <div class=\"mr-3 align-self-center media-left media-middle\">\n" +
+                    "                                                <div class=\"avatar-image avatar-image--loaded\">\n" +
+                    "                                                    <div class=\"avatar avatar--md avatar-image__image\">\n" +
+                    "                                                        <div class=\"avatar__content\"><img\n" +
+                    "                                                            src=\"http://bootdey.com/img/Content/avatar/avatar" + array[i].cartoon + ".png\"/>\n" +
+                    "                                                        </div>\n" +
+                    "                                                    </div>\n" +
+                    "                                                </div>\n" +
+                    "                                            </div>\n" +
+                    "                                            <div class=\"media-body\">\n" +
+                    "                                                <div class=\"mt-0\">" + array[i].login + "</div>\n" +
+                    "                                                <span className=\"small\">Count Of Task is " + array[i].count + " </span></div></div>\n" +
+                    "                                        </div>\n" +
+                    "                                        <i class=\"fa fa-fw fa-circle text-success ml-auto align-self-center ml-2\"></i></a>\n" +
+                    "                                </li>";
+                next.appendChild(current);
+            }
+        });
+
+        axios.get("http://127.0.0.1:8080/user/getLastLogin").then(response => {
+            var array = response.data;
+            var next = document.getElementById('lastLogin');
+            var ct = (array.length>3)? 3: array.length;
+            console.log(ct);
+            for(var i = 0; i < ct; i++)
+            {
+                var now = new Date(array[i].login_time);
+                console.log("wtf");
+                var current = document.createElement('li');
+                current.innerHTML = " <li class=\"nav-item\">\n" +
+                    "                                    <a href=\"#\" class=\"d-flex nav-link\">\n" +
+                    "                                        <div class=\"media\">\n" +
+                    "                                            <div class=\"mr-3 align-self-center media-left media-middle\">\n" +
+                    "                                                <div class=\"avatar-image avatar-image--loaded\">\n" +
+                    "                                                    </div>\n" +
+                    "                                            </div>\n" +
+                    "                                            <div class=\"media-body\">\n" +
+                    "                                                <div class=\"mt-0\">" + array[i].login + "</div>\n" +
+                    "                                                <span className=\"small\">Login date " + now.getFullYear() + "." + now.getMonth() + "." + now.getDay() + " </span></div></div>\n" +
+                    "                                        </div>\n" +
+                    "                                        <i class=\"fa fa-fw fa-circle text-success ml-auto align-self-center ml-2\"></i></a>\n" +
+                    "                                </li>";
+                next.appendChild(current);
+            }
         })
     }
 
@@ -93,9 +149,10 @@ class Tasks extends React.Component<TaskListProps, TaskListState>{
         var next = document.getElementById("bodyForTask");
         for(var i = 0; i < 10; i++){
             var current = document.createElement('tr');
+            var now = new Date(array[i].creation_time);
             current.innerHTML = '<td class="align-middle">\n' +
                 '        <div>'+array[i].description + '</div>\n' +
-                '        <span>' + array[i].creation_time + '</span></td>\n' +
+                '        <span>' +  + now.getFullYear() + "." + now.getMonth() + "." + now.getDay() + '</span></td>\n' +
                 '    <td class="align-middle"><span\n' +
                 '        class="badge badge-success badge-pill">' + ((array[i].status == 0)? "Active" : ((array[i].status == 1)? "InActive" : ((array[i].status==2)? "Deffered" : "Close"))) + '</span></td>\n' +
                 '    <td class="align-middle">\n' +
@@ -164,64 +221,15 @@ class Tasks extends React.Component<TaskListProps, TaskListState>{
                             </div>
                         </div>
                         <div className="mb-4">
-                            <div className="small mb-3">People</div>
-                            <ul className="nav flex-column nav-pills">
-                                <li className="nav-item">
-                                    <a href="#" className="d-flex nav-link">
-                                        <div className="media">
-                                            <div className="mr-3 align-self-center media-left media-middle">
-                                                <div className="avatar-image avatar-image--loaded">
-                                                    <div className="avatar avatar--md avatar-image__image">
-                                                        <div className="avatar__content"><img
-                                                            src="http://bootdey.com/img/Content/avatar/avatar1.png"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="media-body">
-                                                <div className="mt-0">Harvey Blick</div>
-                                                <span className="small">Pennsylvania, SD</span></div>
-                                        </div>
-                                        <i className="fa fa-fw fa-circle text-success ml-auto align-self-center ml-2"></i></a>
-                                </li>
-                                <li className="nav-item">
-                                    <a href="#" className="d-flex nav-link">
-                                        <div className="media">
-                                            <div className="mr-3 align-self-center media-left media-middle">
-                                                <div className="avatar-image avatar-image--loaded">
-                                                    <div className="avatar avatar--md avatar-image__image">
-                                                        <div className="avatar__content"><img
-                                                            src="http://bootdey.com/img/Content/avatar/avatar2.png"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="media-body">
-                                                <div className="mt-0">Hobart Hintz</div>
-                                                <span className="small">North Carolina, CT</span></div>
-                                        </div>
-                                        <i className="fa fa-fw fa-circle text-warning ml-auto align-self-center ml-2"></i></a>
-                                </li>
-                                <li className="nav-item">
-                                    <a href="#" className="d-flex nav-link">
-                                        <div className="media">
-                                            <div className="mr-3 align-self-center media-left media-middle">
-                                                <div className="avatar-image avatar-image--loaded">
-                                                    <div className="avatar avatar--md avatar-image__image">
-                                                        <div className="avatar__content"><img
-                                                            src="http://bootdey.com/img/Content/avatar/avatar3.png"/>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="media-body">
-                                                <div className="mt-0">Elmore Cummerata</div>
-                                                <span className="small">Michigan, NC</span></div>
-                                        </div>
-                                        <i className="fa fa-fw fa-circle text-danger ml-auto align-self-center ml-2"></i></a>
-                                </li>
-                                <li className="nav-item"><a href="#" className="nav-link"><i
-                                    className="fa fa-fw fa-plus mr-2"></i>Add New People</a></li>
+                            <div className="small mb-3">Last Login People</div>
+                            <ul className="nav flex-column nav-pills" id = "lastLogin">
+
+                            </ul>
+                        </div>
+                        <div className="mb-4">
+                            <div className="small mb-3">People who create tasks</div>
+                            <ul className="nav flex-column nav-pills" id = "whoCreateTask">
+
                             </ul>
                         </div>
                     </div>
